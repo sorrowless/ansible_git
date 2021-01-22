@@ -1,0 +1,10 @@
+---
+git_checkout_user: ""
+git_checkout_password: ""
+git_repos: []
+#   - scheme: https
+#     url: github.com/sorrowless/ansible_git.git
+#     user: sorrowless
+#     password: token
+#     refspec: master
+#     dest: /tmp/ansible_git

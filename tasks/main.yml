@@ -1,0 +1,10 @@
+---
+- name: Do some prechecks
+  import_tasks: _prechecks.yml
+
+- name: Install packages
+  import_tasks: install_packages.yml
+
+- name: Include clone tasks
+  include_tasks: clone.yml
+  with_items: "{{ git_repos }}"

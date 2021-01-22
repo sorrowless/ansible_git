@@ -1,0 +1,5 @@
+---
+- name: Install needed packages
+  package:
+    name: "{{ git_common_packages }}"
+    state: present

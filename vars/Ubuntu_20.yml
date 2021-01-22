@@ -1,0 +1,4 @@
+---
+git_common_packages:
+  - python3-pexpect
+  - git

@@ -1,0 +1,81 @@
+---
+- name: Clone repos without authentication
+  git:
+    repo: "{{ item.scheme | default('https') }}://{{ item.url }}"
+    dest: "{{ item.dest }}"
+    force: yes
+    version: "{{ item.refspec | default('master') }}"
+    ssh_opts: "-o StrictHostKeyChecking=no"
+  when:
+    - (item.user is not defined and not git_checkout_user) or not item.user
+    - (item.password is not defined and not git_checkout_password) or not item.password
+
+- name: Clone or update repo with auth
+  block:
+    - name: Check for existing repo
+      stat:
+        path: "{{ item.dest }}"
+      register: repo_dir
+
+    - name: Clone repos with authentication
+      expect:
+        command: "git clone --branch {{ item.refspec | default('master') }} \
+            {{ item.scheme | default('https') }}://{{ item.url }} {{ item.dest }}"
+        responses:
+          Username: "{{ item.user | default(git_checkout_user) }}"
+          Password: "{{ item.password | default(git_checkout_password) }}"
+      when:
+        - not repo_dir.stat.exists
+      no_log: true
+
+    - name: Get current branch name
+      command: git rev-parse --abbrev-ref HEAD
+      args:
+        chdir: "{{ item.dest }}"
+      register: current_branch
+      when:
+        - repo_dir.stat.exists
+      changed_when: false
+
+    - name: "Checkout to {{ item.dest }} branch"
+      command: "git checkout {{ item.refspec }}"
+      args:
+        chdir: "{{ item.dest }}"
+      register: branch_checkout
+      when:
+        - repo_dir.stat.exists
+        - current_branch.stdout != item.refspec | default('master')
+
+    - name: "Fetch changes"
+      command: "git fetch --all"
+      args:
+        chdir: "{{ item.dest }}"
+      when:
+        - repo_dir.stat.exists
+      changed_when: false
+
+    - name: Get diff between current branch and origin
+      command: "git diff origin/{{ item.refspec | default('master') }}"
+      args:
+        chdir: "{{ item.dest }}"
+      register: git_diff
+      when:
+        - repo_dir.stat.exists
+      changed_when: false
+
+    - name: Update repos with authentication
+      expect:
+        command: "git pull origin {{ item.refspec | default('master') }}"
+        responses:
+          Username: "{{ item.user | default(git_checkout_user) }}"
+          Password: "{{ item.password | default(git_checkout_password) }}"
+      args:
+        chdir: "{{ item.dest }}"
+      no_log: true
+      when:
+        - repo_dir.stat.exists
+        - not git_diff.stdout
+
+  when:
+    - (item.user is defined and item.user) or git_checkout_user
+    - (item.password is defined and item.password) or git_checkout_password
