@@ -1,9 +1,9 @@
 # sbog/git
 
 [![Build Status](https://travis-ci.com/sorrowless/ansible_git.svg?branch=master)](https://travis-ci.com/sorrowless/ansible_git)
-[![Ansible Role](https://img.shields.io/ansible/role/42562)](https://galaxy.ansible.com/sorrowless/git)
-[![Ansible Quality Score](https://img.shields.io/ansible/quality/42562)](https://galaxy.ansible.com/sorrowless/git)
-[![Ansible Role](https://img.shields.io/ansible/role/d/42562)](https://galaxy.ansible.com/sorrowless/git)
+[![Ansible Role](https://img.shields.io/ansible/role/52814)](https://galaxy.ansible.com/sorrowless/git)
+[![Ansible Quality Score](https://img.shields.io/ansible/quality/52814)](https://galaxy.ansible.com/sorrowless/git)
+[![Ansible Role](https://img.shields.io/ansible/role/d/52814)](https://galaxy.ansible.com/sorrowless/git)
 [![GitHub](https://img.shields.io/github/license/sorrowless/ansible_git)](https://github.com/sorrowless/ansible_git/blob/master/LICENSE)
 
 An Ansible role which allow to securely pull git repos to target host without
