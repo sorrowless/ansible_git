@@ -47,7 +47,11 @@
         - current_branch.stdout != item.refspec | default('master')
 
     - name: "Fetch changes"
-      command: "git fetch --all"
+      expect:
+        command: "git fetch --all"
+        responses:
+          Username: "{{ item.user | default(git_checkout_user) }}"
+          Password: "{{ item.password | default(git_checkout_password) }}"
       args:
         chdir: "{{ item.dest }}"
       when:
@@ -74,7 +78,7 @@
       no_log: true
       when:
         - repo_dir.stat.exists
-        - not git_diff.stdout
+        - git_diff.stdout
 
   when:
     - (item.user | default(False)) or git_checkout_user
