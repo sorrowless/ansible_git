@@ -7,8 +7,8 @@
     version: "{{ item.refspec | default('master') }}"
     ssh_opts: "-o StrictHostKeyChecking=no"
   when:
-    - (item.user is not defined and not git_checkout_user) or not item.user
-    - (item.password is not defined and not git_checkout_password) or not item.password
+    - not (item.user | default(False) or git_checkout_user)
+    - not (item.password | default(False) or git_checkout_password)
 
 - name: Clone or update repo with auth
   block:
@@ -77,5 +77,5 @@
         - not git_diff.stdout
 
   when:
-    - (item.user is defined and item.user) or git_checkout_user
-    - (item.password is defined and item.password) or git_checkout_password
+    - (item.user | default(False)) or git_checkout_user
+    - (item.password | default(False)) or git_checkout_password
