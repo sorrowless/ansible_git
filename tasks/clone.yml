@@ -18,6 +18,7 @@
       register: repo_dir
 
     - name: Clone repos with authentication
+      become: yes
       expect:
         command: "git clone --branch {{ item.refspec | default('master') }} \
             {{ item.scheme | default('https') }}://{{ item.url }} {{ item.dest }}"
@@ -26,7 +27,15 @@
           Password: "{{ item.password | default(git_checkout_password) }}"
       when:
         - not repo_dir.stat.exists
-      no_log: true
+
+    - name: Ensure that repo directory is owned by target user
+      become: yes
+      file:
+        dest: "{{ item.dest }}"
+        owner: "{{ ansible_user }}"
+        mode: u=rwX,g=rX,o=rX
+        recurse: yes
+      when: not repo_dir.stat.exists
 
     - name: Get current branch name
       command: git rev-parse --abbrev-ref HEAD
